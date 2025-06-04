@@ -93,13 +93,13 @@ async function processImageWithReplicate(imageId: number, imagePath: string, fil
     const imageBuffer = fs.readFileSync(imagePath);
     const base64Image = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
 
-    // Prepare prompt based on filter type
+    // Prepare prompt based on filter type - must include "img" trigger word
     const prompts: Record<string, string> = {
-      cartoon: "A person in cartoon style, animated, colorful, 3d CGI, art by Pixar",
-      anime: "A person in anime style, manga, japanese animation style",
-      cyberpunk: "A person in cyberpunk style, neon lights, futuristic, digital art",
-      watercolor: "A person in watercolor painting style, artistic, soft brushstrokes",
-      "old-photo": "A person in vintage photograph style, sepia tone, aged, historical"
+      cartoon: "img in cartoon style, animated, colorful, 3d CGI, art by Pixar, half-body",
+      anime: "img in anime style, manga, japanese animation style, half-body",
+      cyberpunk: "img in cyberpunk style, neon lights, futuristic, digital art, half-body",
+      watercolor: "img in watercolor painting style, artistic, soft brushstrokes, half-body",
+      "old-photo": "img in vintage photograph style, sepia tone, aged, historical, half-body"
     };
 
     const prompt = `${prompts[filterType]}, high quality, detailed`;
