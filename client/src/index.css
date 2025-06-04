@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 6%; /* #0F0F0F */
+  --foreground: 0 0% 98%; /* #FAFAFA */
+  --muted: 0 0% 16%; /* #292929 */
+  --muted-foreground: 0 0% 64%; /* #A3A3A3 */
+  --popover: 0 0% 6%; /* #0F0F0F */
+  --popover-foreground: 0 0% 98%; /* #FAFAFA */
+  --card: 0 0% 6%; /* #0F0F0F */
+  --card-foreground: 0 0% 98%; /* #FAFAFA */
+  --border: 0 0% 24%; /* #3D3D3D */
+  --input: 0 0% 24%; /* #3D3D3D */
+  --primary: 0 84% 60%; /* #FF6B6B - Red accent */
+  --primary-foreground: 0 0% 98%; /* #FAFAFA */
+  --secondary: 0 0% 16%; /* #292929 */
+  --secondary-foreground: 0 0% 98%; /* #FAFAFA */
+  --accent: 0 0% 16%; /* #292929 */
+  --accent-foreground: 0 0% 98%; /* #FAFAFA */
+  --destructive: 0 84% 60%; /* #FF6B6B */
+  --destructive-foreground: 0 0% 98%; /* #FAFAFA */
+  --ring: 0 84% 60%; /* #FF6B6B */
+  --radius: 0.5rem;
+  --chart-1: 220 70% 50%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
+}
+
+.dark {
+  --background: 0 0% 6%; /* #0F0F0F */
+  --foreground: 0 0% 98%; /* #FAFAFA */
+  --muted: 0 0% 16%; /* #292929 */
+  --muted-foreground: 0 0% 64%; /* #A3A3A3 */
+  --popover: 0 0% 6%; /* #0F0F0F */
+  --popover-foreground: 0 0% 98%; /* #FAFAFA */
+  --card: 0 0% 6%; /* #0F0F0F */
+  --card-foreground: 0 0% 98%; /* #FAFAFA */
+  --border: 0 0% 24%; /* #3D3D3D */
+  --input: 0 0% 24%; /* #3D3D3D */
+  --primary: 0 84% 60%; /* #FF6B6B - Red accent */
+  --primary-foreground: 0 0% 98%; /* #FAFAFA */
+  --secondary: 0 0% 16%; /* #292929 */
+  --secondary-foreground: 0 0% 98%; /* #FAFAFA */
+  --accent: 0 0% 16%; /* #292929 */
+  --accent-foreground: 0 0% 98%; /* #FAFAFA */
+  --destructive: 0 84% 60%; /* #FF6B6B */
+  --destructive-foreground: 0 0% 98%; /* #FAFAFA */
+  --ring: 0 84% 60%; /* #FF6B6B */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  html, body, #root {
+    height: 100%;
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .screen {
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  .screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    position: relative;
+  }
+  
+  /* Custom scrollbar for mobile */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 2px;
+  }
+}
