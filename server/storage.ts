@@ -18,8 +18,11 @@ export class MemStorage implements IStorage {
   async createImage(insertImage: InsertImage): Promise<Image> {
     const id = this.currentId++;
     const image: Image = {
-      ...insertImage,
       id,
+      originalUrl: insertImage.originalUrl,
+      filteredUrl: insertImage.filteredUrl,
+      filterType: insertImage.filterType,
+      status: insertImage.status,
       createdAt: new Date(),
     };
     this.images.set(id, image);
