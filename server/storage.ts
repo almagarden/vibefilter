@@ -20,9 +20,9 @@ export class MemStorage implements IStorage {
     const image: Image = {
       id,
       originalUrl: insertImage.originalUrl,
-      filteredUrl: insertImage.filteredUrl,
+      filteredUrl: insertImage.filteredUrl ?? null,
       filterType: insertImage.filterType,
-      status: insertImage.status,
+      status: insertImage.status ?? "processing",
       createdAt: new Date(),
     };
     this.images.set(id, image);

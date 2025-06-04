@@ -14,6 +14,9 @@ export const images = pgTable("images", {
 export const insertImageSchema = createInsertSchema(images).omit({
   id: true,
   createdAt: true,
+}).extend({
+  filteredUrl: z.string().nullable().optional(),
+  status: z.string().optional(),
 });
 
 export type InsertImage = z.infer<typeof insertImageSchema>;

@@ -95,30 +95,34 @@ async function processImageWithReplicate(imageId: number, imagePath: string, fil
 
     // Prepare prompt based on filter type
     const prompts: Record<string, string> = {
-      cartoon: "cartoon style, animated, colorful, disney-like",
-      anime: "anime style, manga, japanese animation",
-      cyberpunk: "cyberpunk style, neon lights, futuristic, digital art",
-      watercolor: "watercolor painting, artistic, soft brushstrokes",
-      "old-photo": "vintage photograph, sepia tone, aged, historical"
+      cartoon: "A person in cartoon style, animated, colorful, 3d CGI, art by Pixar",
+      anime: "A person in anime style, manga, japanese animation style",
+      cyberpunk: "A person in cyberpunk style, neon lights, futuristic, digital art",
+      watercolor: "A person in watercolor painting style, artistic, soft brushstrokes",
+      "old-photo": "A person in vintage photograph style, sepia tone, aged, historical"
     };
 
     const prompt = `${prompts[filterType]}, high quality, detailed`;
 
-    // Call Replicate API
+    // Call Replicate API with PhotoMaker model
     const response = await fetch("https://api.replicate.com/v1/predictions", {
       method: "POST",
       headers: {
-        "Authorization": `Token ${REPLICATE_API_TOKEN}`,
+        "Authorization": `Bearer ${REPLICATE_API_TOKEN}`,
         "Content-Type": "application/json",
+        "Prefer": "wait"
       },
       body: JSON.stringify({
-        version: "be04660a5b93ef2aff61e3668dedb4cbeb14941e62a3fd5998364a32d613e35e", // stable-diffusion img2img
+        version: "tencentarc/photomaker-style:467d062309da518648ba89d226490e02b8ed09b5abc15026e54e31c5a8cd0769",
         input: {
-          image: base64Image,
           prompt: prompt,
-          strength: 0.7,
-          guidance_scale: 7.5,
-          num_inference_steps: 20,
+          input_image: base64Image,
+          num_steps: 50,
+          style_name: "(No style)",
+          num_outputs: 1,
+          guidance_scale: 5,
+          negative_prompt: "realistic, photo-realistic, worst quality, greyscale, bad anatomy, bad hands, error, text",
+          style_strength_ratio: 35
         },
       }),
     });
@@ -157,9 +161,10 @@ async function pollForCompletion(imageId: number, predictionId: string, apiToken
       const prediction = await response.json();
 
       if (prediction.status === "succeeded" && prediction.output) {
-        // Save the result URL
+        // Handle both array and single URL formats
+        const outputUrl = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
         await storage.updateImage(imageId, {
-          filteredUrl: prediction.output[0],
+          filteredUrl: outputUrl,
           status: "completed",
         });
         return;
