@@ -132,6 +132,7 @@ async function processImageWithReplicate(imageId: number, imagePath: string, fil
     }
 
     const prediction = await response.json();
+    console.log("Replicate prediction created:", prediction);
     
     // Poll for completion
     await pollForCompletion(imageId, prediction.id, REPLICATE_API_TOKEN);
@@ -159,16 +160,19 @@ async function pollForCompletion(imageId: number, predictionId: string, apiToken
       }
 
       const prediction = await response.json();
+      console.log(`Poll attempt ${attempts}: Status ${prediction.status}`, prediction);
 
       if (prediction.status === "succeeded" && prediction.output) {
         // Handle both array and single URL formats
         const outputUrl = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+        console.log("Processing completed, updating image with URL:", outputUrl);
         await storage.updateImage(imageId, {
           filteredUrl: outputUrl,
           status: "completed",
         });
         return;
       } else if (prediction.status === "failed") {
+        console.log("Prediction failed:", prediction);
         await storage.updateImage(imageId, { status: "failed" });
         return;
       }
