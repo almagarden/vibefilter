@@ -162,15 +162,24 @@ async function pollForCompletion(imageId: number, predictionId: string, apiToken
       const prediction = await response.json();
       console.log(`Poll attempt ${attempts}: Status ${prediction.status}`, prediction);
 
-      if (prediction.status === "succeeded" && prediction.output) {
-        // Handle both array and single URL formats
-        const outputUrl = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
-        console.log("Processing completed, updating image with URL:", outputUrl);
-        await storage.updateImage(imageId, {
-          filteredUrl: outputUrl,
-          status: "completed",
-        });
-        return;
+      if (prediction.status === "succeeded") {
+        if (prediction.output && prediction.output !== null) {
+          // Handle both array and single URL formats
+          const outputUrl = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+          console.log("Processing completed, updating image with URL:", outputUrl);
+          await storage.updateImage(imageId, {
+            filteredUrl: outputUrl,
+            status: "completed",
+          });
+          return;
+        } else {
+          // Handle case where output is null (NSFW content detected)
+          console.log("Content flagged as NSFW, marking as failed");
+          await storage.updateImage(imageId, { 
+            status: "failed"
+          });
+          return;
+        }
       } else if (prediction.status === "failed") {
         console.log("Prediction failed:", prediction);
         await storage.updateImage(imageId, { status: "failed" });

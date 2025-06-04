@@ -1,4 +1,6 @@
 import { images, type Image, type InsertImage } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   createImage(image: InsertImage): Promise<Image>;
@@ -6,41 +8,33 @@ export interface IStorage {
   updateImage(id: number, updates: Partial<Image>): Promise<Image | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private images: Map<number, Image>;
-  private currentId: number;
-
-  constructor() {
-    this.images = new Map();
-    this.currentId = 1;
+export class DatabaseStorage implements IStorage {
+  async getImage(id: number): Promise<Image | undefined> {
+    const [image] = await db.select().from(images).where(eq(images.id, id));
+    return image || undefined;
   }
 
   async createImage(insertImage: InsertImage): Promise<Image> {
-    const id = this.currentId++;
-    const image: Image = {
-      id,
-      originalUrl: insertImage.originalUrl,
-      filteredUrl: insertImage.filteredUrl ?? null,
-      filterType: insertImage.filterType,
-      status: insertImage.status ?? "processing",
-      createdAt: new Date(),
-    };
-    this.images.set(id, image);
+    const [image] = await db
+      .insert(images)
+      .values({
+        originalUrl: insertImage.originalUrl,
+        filteredUrl: insertImage.filteredUrl ?? null,
+        filterType: insertImage.filterType,
+        status: insertImage.status ?? "processing"
+      })
+      .returning();
     return image;
   }
 
-  async getImage(id: number): Promise<Image | undefined> {
-    return this.images.get(id);
-  }
-
   async updateImage(id: number, updates: Partial<Image>): Promise<Image | undefined> {
-    const existing = this.images.get(id);
-    if (!existing) return undefined;
-    
-    const updated = { ...existing, ...updates };
-    this.images.set(id, updated);
-    return updated;
+    const [updated] = await db
+      .update(images)
+      .set(updates)
+      .where(eq(images.id, id))
+      .returning();
+    return updated || undefined;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

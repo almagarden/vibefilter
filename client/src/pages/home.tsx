@@ -32,7 +32,7 @@ export default function Home() {
       } else if (imageResult.status === "failed") {
         toast({
           title: "Processing Failed",
-          description: "There was an error processing your image. Please try again.",
+          description: "The image was flagged by content filters or processing failed. Please try a different photo.",
           variant: "destructive",
         });
         setCurrentScreen("filter");
