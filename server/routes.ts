@@ -68,6 +68,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Image not found" });
       }
 
+      console.log(`Returning image ${id} with status: ${image.status}, filteredUrl: ${image.filteredUrl ? 'present' : 'null'}`);
       res.json(image);
     } catch (error) {
       console.error("Get image error:", error);

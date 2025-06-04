@@ -43,5 +43,7 @@ export async function getImageResult(imageId: number): Promise<ImageResult> {
     throw new Error(error || "Failed to get image result");
   }
 
-  return response.json();
+  const result = await response.json();
+  console.log("API response for image", imageId, ":", result);
+  return result;
 }

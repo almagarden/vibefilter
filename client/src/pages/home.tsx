@@ -20,6 +20,7 @@ export default function Home() {
   // Poll for image result when processing
   const { data: imageResult } = useQuery({
     queryKey: ["/api/images", imageId],
+    queryFn: () => imageId ? getImageResult(imageId) : Promise.reject("No image ID"),
     enabled: !!imageId && currentScreen === "processing",
     refetchInterval: 2000, // Poll every 2 seconds
   });
